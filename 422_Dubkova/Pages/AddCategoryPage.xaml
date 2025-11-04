@@ -1,0 +1,28 @@
+﻿<Page x:Class="_422_Dubkova.Pages.AddCategoryPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:_422_Dubkova.Pages"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="Добавление категории">
+
+    <Grid>
+        <StackPanel Margin="20" VerticalAlignment="Center" HorizontalAlignment="Center">
+
+            <!-- Название категории -->
+            <Grid Width="400" Height="30" Margin="0,10">
+                <TextBox x:Name="TBName" Text="{Binding Name}" Height="30" VerticalAlignment="Top" TextChanged="TBName_TextChanged"/>
+                <TextBlock x:Name="NameHintText" Text="Название категории" VerticalAlignment="Center" Margin="5,0" Style="{StaticResource HintTextBlockStyle}"/>
+            </Grid>
+
+            <!-- Кнопки -->
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,20,0,0">
+                <Button Name="ButtonSave" Content="Сохранить" Width="100" Height="30" Margin="10,0" Click="ButtonSave_Click"/>
+                <Button Name="ButtonClear" Content="Очистить" Width="100" Height="30" Margin="10,0" Click="ButtonClear_Click"/>
+            </StackPanel>
+
+        </StackPanel>
+    </Grid>
+</Page>

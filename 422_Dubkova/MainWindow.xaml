@@ -1,0 +1,116 @@
+﻿<Window x:Class="_422_Dubkova.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:_422_Dubkova"
+        mc:Ignorable="d"
+        Loaded="Window_Loaded"
+        Closing="Window_Closing"
+        Title="Главное окно"
+        Height="500" Width="800"
+        WindowStartupLocation="CenterScreen"
+        Style="{DynamicResource WindowStyleKey}">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="45"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="45"/>
+        </Grid.RowDefinitions>
+
+        <!-- Верхняя панель (использует ресурсы стилей) -->
+        <Border Grid.Row="0" Background="{DynamicResource PrimaryBackgroundBrush}" 
+            BorderBrush="{DynamicResource ButtonBorderBrush}" BorderThickness="0,0,0,1">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Кнопка назад — имя и обработчик сохранены -->
+                <Button x:Name="BackButton"
+                    Content="Назад"
+                    Width="80" Height="30"
+                    Margin="10,7,0,7"
+                    Click="BackButton_Click"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center" />
+
+                <!-- Центр — заголовок окна -->
+                <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <TextBlock Text="{Binding Title, RelativeSource={RelativeSource AncestorType=Window}}"
+                           FontWeight="SemiBold"
+                           Foreground="{DynamicResource PrimaryForegroundBrush}" />
+                </StackPanel>
+
+                <!-- Selector тем — сохраняются имя и событие -->
+                <!--<ComboBox x:Name="ThemeSelector" 
+                      Grid.Column="2"
+                      Width="170"
+                      Height="28"
+                      Margin="0,7,10,7"
+                      VerticalAlignment="Center"
+                      SelectionChanged="ThemeSelector_SelectionChanged"
+                      Background="{DynamicResource ButtonBackgroundBrush}"
+                      Foreground="{DynamicResource ButtonForegroundBrush}">
+                    <ComboBoxItem Content="Светлая тема" Tag="LightTheme.xaml" IsSelected="True" />
+                    <ComboBoxItem Content="Тёмная тема" Tag="DarkTheme.xaml"/>
+                </ComboBox>-->
+
+                <ComboBox x:Name="ThemeSelector" 
+                Grid.Column="2"
+                Width="170"
+                Height="28"
+                Margin="0,7,10,7"
+                VerticalAlignment="Center"
+                SelectionChanged="ThemeSelector_SelectionChanged"
+                Style="{StaticResource ComboBoxTextStyle}">
+                    <ComboBoxItem Content="Светлая тема" Tag="LightTheme.xaml" IsSelected="True" />
+                    <ComboBoxItem Content="Тёмная тема" Tag="DarkTheme.xaml"/>
+                </ComboBox>
+            </Grid>
+        </Border>
+
+        <!-- Основная область: Frame для навигации + приветственный блок -->
+        <Grid Grid.Row="1" Margin="12">
+            <!-- Frame занимает всё пространство; имя MainFrame сохранено -->
+            <Frame x:Name="MainFrame" NavigationUIVisibility="Hidden" />
+
+            <!-- Приветственный блок — имя сохранено, чтобы .cs мог обращаться -->
+            <Border x:Name="WelcomePanel"
+                HorizontalAlignment="Center" VerticalAlignment="Center"
+                Padding="20"
+                Background="{DynamicResource PrimaryBackgroundBrush}"
+                BorderBrush="{DynamicResource ButtonBorderBrush}"
+                BorderThickness="1"
+                Width="392">
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" >
+                    <TextBlock Text="Добро пожаловать в приложение ❤"
+                           Style="{StaticResource HeaderText}"
+                           HorizontalAlignment="Center"
+                           Margin="0,0,0,12"/>
+                    <!-- Кнопка входа — имя и обработчик сохранены -->
+                    <Button x:Name="AuthButton"
+                        Content="Авторизация"
+                        Width="140" Height="36"
+                        Click="AuthButton_Click"
+                        HorizontalAlignment="Center" />
+                </StackPanel>
+            </Border>
+        </Grid>
+
+        <!-- Нижняя панель: дата/время -->
+        <Border Grid.Row="2" Background="{DynamicResource PrimaryBackgroundBrush}" 
+            BorderBrush="{DynamicResource ButtonBorderBrush}" BorderThickness="1,1,1,0">
+            <Grid>
+                <TextBlock x:Name="DateTimeNow"
+                       HorizontalAlignment="Right"
+                       VerticalAlignment="Center"
+                       Margin="0,0,12,0"
+                       Foreground="{DynamicResource PrimaryForegroundBrush}" />
+            </Grid>
+        </Border>
+    </Grid>
+</Window>
