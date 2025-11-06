@@ -61,12 +61,12 @@
                         <Image Grid.Row="1" Width="200" Height="200" Stretch="UniformToFill" HorizontalAlignment="Center">
                             <Image.Source>
                                 <Binding Path="Photo" UpdateSourceTrigger="PropertyChanged">
-                                    <!--<Binding.TargetNullValue>
-                                        <BitmapImage UriSource="C:/Users/Mi/OneDrive/Pictures/meduza.jpg"/>
+                                    <Binding.TargetNullValue>
+                                        <BitmapImage UriSource="D:\Аксёнова\УП окт-ноя 2025\422_Dubkova\422_Dubkova\422_Dubkova\ava.jpg"/>
                                     </Binding.TargetNullValue>
                                     <Binding.FallbackValue>
-                                        <BitmapImage UriSource="C:/Users/Mi/OneDrive/Pictures/meduza.jpg"/>
-                                    </Binding.FallbackValue>-->
+                                        <BitmapImage UriSource="D:\Аксёнова\УП окт-ноя 2025\422_Dubkova\422_Dubkova\422_Dubkova\ava.jpg"/>
+                                    </Binding.FallbackValue>
                                 </Binding>
                             </Image.Source>
                         </Image>

@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Word = Microsoft.Office.Interop.Word;
-//using Excel = Microsoft.Office.Interop.Excel;
+using Excel = Microsoft.Office.Interop.Excel;
 using System.Windows.Forms.DataVisualization.Charting;
 
 namespace _422_Dubkova.Pages
@@ -74,127 +74,127 @@ namespace _422_Dubkova.Pages
 
         private void ExportToExcel_Click(object sender, RoutedEventArgs e)
         {
-            //// Получаем отсортированный список пользователей
-            //var allUsers = _context.User.ToList().OrderBy(u => u.FIO).ToList();
+            // Получаем отсортированный список пользователей
+            var allUsers = _context.User.ToList().OrderBy(u => u.FIO).ToList();
 
-            //var application = new Excel.Application();
-            //application.SheetsInNewWorkbook = allUsers.Count;
-            //Excel.Workbook workbook = application.Workbooks.Add(Type.Missing);
+            var application = new Excel.Application();
+            application.SheetsInNewWorkbook = allUsers.Count;
+            Excel.Workbook workbook = application.Workbooks.Add(Type.Missing);
 
-            //double grandTotal = 0; // Общая сумма по всем пользователям
+            double grandTotal = 0; // Общая сумма по всем пользователям
 
-            //for (int i = 0; i < allUsers.Count; i++)
-            //{
-            //    int startRowIndex = 1;
-            //    Excel.Worksheet worksheet = application.Worksheets[i + 1];
-            //    worksheet.Name = allUsers[i].FIO;
+            for (int i = 0; i < allUsers.Count; i++)
+            {
+                int startRowIndex = 1;
+                Excel.Worksheet worksheet = application.Worksheets[i + 1];
+                worksheet.Name = allUsers[i].FIO;
 
-            //    // Заголовки колонок
-            //    worksheet.Cells[startRowIndex, 1] = "Дата платежа";
-            //    worksheet.Cells[startRowIndex, 2] = "Название";
-            //    worksheet.Cells[startRowIndex, 3] = "Стоимость";
-            //    worksheet.Cells[startRowIndex, 4] = "Количество";
-            //    worksheet.Cells[startRowIndex, 5] = "Сумма";
+                // Заголовки колонок
+                worksheet.Cells[startRowIndex, 1] = "Дата платежа";
+                worksheet.Cells[startRowIndex, 2] = "Название";
+                worksheet.Cells[startRowIndex, 3] = "Стоимость";
+                worksheet.Cells[startRowIndex, 4] = "Количество";
+                worksheet.Cells[startRowIndex, 5] = "Сумма";
 
-            //    Excel.Range columnHeaderRange = worksheet.Range[worksheet.Cells[startRowIndex, 1], worksheet.Cells[startRowIndex, 5]];
-            //    columnHeaderRange.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
-            //    columnHeaderRange.Font.Bold = true;
+                Excel.Range columnHeaderRange = worksheet.Range[worksheet.Cells[startRowIndex, 1], worksheet.Cells[startRowIndex, 5]];
+                columnHeaderRange.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+                columnHeaderRange.Font.Bold = true;
 
-            //    startRowIndex++;
+                startRowIndex++;
 
-            //    // Группируем платежи пользователя по категориям, сортируем по дате
-            //    var userCategories = allUsers[i].Payment.OrderBy(p => p.Date).GroupBy(p => p.Category).OrderBy(g => g.Key.Name);
+                // Группируем платежи пользователя по категориям, сортируем по дате
+                var userCategories = allUsers[i].Payment.OrderBy(p => p.Date).GroupBy(p => p.Category).OrderBy(g => g.Key.Name);
 
-            //    foreach (var groupCategory in userCategories)
-            //    {
-            //        // Название категории (объединённая ячейка)
-            //        Excel.Range headerRange = worksheet.Range[worksheet.Cells[startRowIndex, 1], worksheet.Cells[startRowIndex, 5]];
-            //        headerRange.Merge();
-            //        headerRange.Value = groupCategory.Key.Name;
-            //        headerRange.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
-            //        headerRange.Font.Italic = true;
+                foreach (var groupCategory in userCategories)
+                {
+                    // Название категории (объединённая ячейка)
+                    Excel.Range headerRange = worksheet.Range[worksheet.Cells[startRowIndex, 1], worksheet.Cells[startRowIndex, 5]];
+                    headerRange.Merge();
+                    headerRange.Value = groupCategory.Key.Name;
+                    headerRange.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+                    headerRange.Font.Italic = true;
 
-            //        startRowIndex++;
+                    startRowIndex++;
 
-            //        // Платежи по категории
-            //        foreach (var payment in groupCategory)
-            //        {
-            //            worksheet.Cells[startRowIndex, 1] = payment.Date.ToString("dd.MM.yyyy");
-            //            worksheet.Cells[startRowIndex, 2] = payment.Name;
+                    // Платежи по категории
+                    foreach (var payment in groupCategory)
+                    {
+                        worksheet.Cells[startRowIndex, 1] = payment.Date.ToString("dd.MM.yyyy");
+                        worksheet.Cells[startRowIndex, 2] = payment.Name;
 
-            //            worksheet.Cells[startRowIndex, 3] = payment.Price;
-            //            (worksheet.Cells[startRowIndex, 3] as Excel.Range).NumberFormat = "0.00";
+                        worksheet.Cells[startRowIndex, 3] = payment.Price;
+                        (worksheet.Cells[startRowIndex, 3] as Excel.Range).NumberFormat = "0.00";
 
-            //            worksheet.Cells[startRowIndex, 4] = payment.Num;
+                        worksheet.Cells[startRowIndex, 4] = payment.Num;
 
-            //            // Формула для суммы: Цена * Кол-во
-            //            worksheet.Cells[startRowIndex, 5].Formula = $"=C{startRowIndex}*D{startRowIndex}";
-            //            (worksheet.Cells[startRowIndex, 5] as Excel.Range).NumberFormat = "0.00";
+                        // Формула для суммы: Цена * Кол-во
+                        worksheet.Cells[startRowIndex, 5].Formula = $"=C{startRowIndex}*D{startRowIndex}";
+                        (worksheet.Cells[startRowIndex, 5] as Excel.Range).NumberFormat = "0.00";
 
-            //            startRowIndex++;
-            //        }
+                        startRowIndex++;
+                    }
 
-            //        // Итого по категории (объединяем 1-4 столбцы)
-            //        Excel.Range sumRange = worksheet.Range[worksheet.Cells[startRowIndex, 1], worksheet.Cells[startRowIndex, 4]];
-            //        sumRange.Merge();
-            //        sumRange.Value = "ИТОГО:";
-            //        sumRange.HorizontalAlignment = Excel.XlHAlign.xlHAlignRight;
+                    // Итого по категории (объединяем 1-4 столбцы)
+                    Excel.Range sumRange = worksheet.Range[worksheet.Cells[startRowIndex, 1], worksheet.Cells[startRowIndex, 4]];
+                    sumRange.Merge();
+                    sumRange.Value = "ИТОГО:";
+                    sumRange.HorizontalAlignment = Excel.XlHAlign.xlHAlignRight;
 
-            //        // Формула суммы по столбцу E для текущей категории
-            //        worksheet.Cells[startRowIndex, 5].Formula = $"=SUM(E{startRowIndex - groupCategory.Count()}:" +
-            //                                                  $"E{startRowIndex - 1})";
+                    // Формула суммы по столбцу E для текущей категории
+                    worksheet.Cells[startRowIndex, 5].Formula = $"=SUM(E{startRowIndex - groupCategory.Count()}:" +
+                                                              $"E{startRowIndex - 1})";
 
-            //        sumRange.Font.Bold = true;
-            //        worksheet.Cells[startRowIndex, 5].Font.Bold = true;
+                    sumRange.Font.Bold = true;
+                    worksheet.Cells[startRowIndex, 5].Font.Bold = true;
 
-            //        startRowIndex++;
+                    startRowIndex++;
 
-            //        // Границы таблицы
-            //        Excel.Range rangeBorders = worksheet.Range[worksheet.Cells[1, 1], worksheet.Cells[startRowIndex - 1, 5]];
-            //        rangeBorders.Borders[Excel.XlBordersIndex.xlEdgeBottom].LineStyle =
-            //        rangeBorders.Borders[Excel.XlBordersIndex.xlEdgeLeft].LineStyle =
-            //        rangeBorders.Borders[Excel.XlBordersIndex.xlEdgeRight].LineStyle =
-            //        rangeBorders.Borders[Excel.XlBordersIndex.xlEdgeTop].LineStyle =
-            //        rangeBorders.Borders[Excel.XlBordersIndex.xlInsideHorizontal].LineStyle =
-            //        rangeBorders.Borders[Excel.XlBordersIndex.xlInsideVertical].LineStyle = Excel.XlLineStyle.xlContinuous;
-            //    }
+                    // Границы таблицы
+                    Excel.Range rangeBorders = worksheet.Range[worksheet.Cells[1, 1], worksheet.Cells[startRowIndex - 1, 5]];
+                    rangeBorders.Borders[Excel.XlBordersIndex.xlEdgeBottom].LineStyle =
+                    rangeBorders.Borders[Excel.XlBordersIndex.xlEdgeLeft].LineStyle =
+                    rangeBorders.Borders[Excel.XlBordersIndex.xlEdgeRight].LineStyle =
+                    rangeBorders.Borders[Excel.XlBordersIndex.xlEdgeTop].LineStyle =
+                    rangeBorders.Borders[Excel.XlBordersIndex.xlInsideHorizontal].LineStyle =
+                    rangeBorders.Borders[Excel.XlBordersIndex.xlInsideVertical].LineStyle = Excel.XlLineStyle.xlContinuous;
+                }
 
-            //    worksheet.Columns.AutoFit();
+                worksheet.Columns.AutoFit();
 
-            //    // Считаем сумму всех платежей пользователя и добавляем в общий итог
-            //    Excel.Range lastRowSumCell = worksheet.Cells[startRowIndex - 1, 5];
-            //    var cellValue = lastRowSumCell.Value2;
-            //    double cellDouble = 0;
+                // Считаем сумму всех платежей пользователя и добавляем в общий итог
+                Excel.Range lastRowSumCell = worksheet.Cells[startRowIndex - 1, 5];
+                var cellValue = lastRowSumCell.Value2;
+                double cellDouble = 0;
 
-            //    if (cellValue != null)
-            //    {
-            //        if (cellValue is double)
-            //        {
-            //            cellDouble = (double)cellValue;
-            //        }
-            //        else
-            //        {
-            //            double.TryParse(cellValue.ToString(), out cellDouble);
-            //        }
-            //    }
+                if (cellValue != null)
+                {
+                    if (cellValue is double)
+                    {
+                        cellDouble = (double)cellValue;
+                    }
+                    else
+                    {
+                        double.TryParse(cellValue.ToString(), out cellDouble);
+                    }
+                }
 
-            //    grandTotal += cellDouble;
-            //}
+                grandTotal += cellDouble;
+            }
 
-            //// Добавляем лист с общим итогом после всех пользователей
-            //Excel.Worksheet summarySheet = workbook.Worksheets.Add(After: workbook.Worksheets[workbook.Worksheets.Count]);
-            //summarySheet.Name = "Общий итог";
+            // Добавляем лист с общим итогом после всех пользователей
+            Excel.Worksheet summarySheet = workbook.Worksheets.Add(After: workbook.Worksheets[workbook.Worksheets.Count]);
+            summarySheet.Name = "Общий итог";
 
-            //summarySheet.Cells[1, 1] = "Общий итог:";
-            //summarySheet.Cells[1, 2] = grandTotal;
+            summarySheet.Cells[1, 1] = "Общий итог:";
+            summarySheet.Cells[1, 2] = grandTotal;
 
-            //Excel.Range summaryRange = summarySheet.Range[summarySheet.Cells[1, 1], summarySheet.Cells[1, 2]];
-            //summaryRange.Font.Color = Excel.XlRgbColor.rgbRed;
-            //summaryRange.Font.Bold = true;
+            Excel.Range summaryRange = summarySheet.Range[summarySheet.Cells[1, 1], summarySheet.Cells[1, 2]];
+            summaryRange.Font.Color = Excel.XlRgbColor.rgbRed;
+            summaryRange.Font.Bold = true;
 
-            //summarySheet.Columns.AutoFit();
+            summarySheet.Columns.AutoFit();
 
-            //application.Visible = true;
+            application.Visible = true;
         }
 
         private void ExportToWord_Click(object sender, RoutedEventArgs e)
@@ -363,8 +363,8 @@ namespace _422_Dubkova.Pages
                 application.Visible = true;
 
                 // Сохранение документа (укажите свои пути)
-                string pathDocx = @"C:\Users\227084\Downloads\Payments.docx";
-                string pathPdf = @"C:\Users\227084\Downloads\Payments.pdf";
+                string pathDocx = @"D:\Payments.docx";
+                string pathPdf = @"D:\Payments.pdf";
 
                 document.SaveAs2(pathDocx);
                 document.SaveAs2(pathPdf, Word.WdExportFormat.wdExportFormatPDF);
