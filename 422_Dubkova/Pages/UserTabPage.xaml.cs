@@ -2,26 +2,15 @@
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace _422_Dubkova.Pages
 {
-    /// <summary>
-    /// Логика взаимодействия для UserTabPage.xaml
-    /// </summary>
     public partial class UserTabPage : Page
     {
         private List<User> users;
+
         public UserTabPage()
         {
             InitializeComponent();
@@ -52,13 +41,13 @@ namespace _422_Dubkova.Pages
 
         private void ButtonAdd_Click(object sender, RoutedEventArgs e)
         {
-            NavigationService.Navigate(new AddUserPage());
+            NavigationService.Navigate(new AddUserPage(OnUserSaved));
         }
 
         private void EditButton_Click(object sender, RoutedEventArgs e)
         {
             var selectedUser = (User)((Button)sender).DataContext;
-            NavigationService.Navigate(new AddUserPage(selectedUser));
+            NavigationService.Navigate(new AddUserPage(selectedUser, OnUserSaved));
         }
 
         private void ButtonDel_Click(object sender, RoutedEventArgs e)
@@ -71,7 +60,8 @@ namespace _422_Dubkova.Pages
                 return;
             }
 
-            if (MessageBox.Show($"Вы точно хотите удалить {selectedItems.Count} пользователь(ей)?", "Подтверждение", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
+            if (MessageBox.Show($"Вы точно хотите удалить {selectedItems.Count} пользователь(ей)?",
+                "Подтверждение", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
             {
                 try
                 {
@@ -81,9 +71,7 @@ namespace _422_Dubkova.Pages
                         {
                             var userToDelete = db.User.Find(user.ID);
                             if (userToDelete != null)
-                            {
                                 db.User.Remove(userToDelete);
-                            }
                         }
                         db.SaveChanges();
                     }
@@ -93,9 +81,16 @@ namespace _422_Dubkova.Pages
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"Ошибка при удалении: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show($"Ошибка при удалении: {ex.Message}", "Ошибка",
+                        MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
+        }
+
+        // 🔹 метод обратного вызова после добавления/редактирования пользователя
+        private void OnUserSaved()
+        {
+            LoadData();
         }
     }
 }

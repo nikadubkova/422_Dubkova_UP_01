@@ -2,17 +2,9 @@
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace _422_Dubkova.Pages
 {
@@ -45,24 +37,27 @@ namespace _422_Dubkova.Pages
         {
             if (Visibility == Visibility.Visible)
             {
-                Entities.GetContext().ChangeTracker.Entries()
-                    .Where(x => x.State != EntityState.Added)
-                    .ToList()
-                    .ForEach(x => x.Reload());
-
                 LoadData();
             }
         }
 
         private void ButtonAdd_Click(object sender, RoutedEventArgs e)
         {
-            NavigationService.Navigate(new AddPaymentPage());
+            // Передаём колбэк для обновления таблицы после сохранения
+            NavigationService.Navigate(new AddPaymentPage(OnPaymentSaved));
         }
 
         private void EditButton_Click(object sender, RoutedEventArgs e)
         {
             var selectedPayment = (Payment)((Button)sender).DataContext;
-            NavigationService.Navigate(new AddPaymentPage(selectedPayment));
+            // Передаём выбранный платеж и колбэк
+            NavigationService.Navigate(new AddPaymentPage(selectedPayment, OnPaymentSaved));
+        }
+
+        // Метод обратного вызова — обновляет список платежей
+        private void OnPaymentSaved()
+        {
+            LoadData();
         }
 
         private void ButtonDel_Click(object sender, RoutedEventArgs e)
@@ -75,7 +70,8 @@ namespace _422_Dubkova.Pages
                 return;
             }
 
-            if (MessageBox.Show($"Вы точно хотите удалить {selectedItems.Count} платеж(ей)?", "Подтверждение", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
+            if (MessageBox.Show($"Вы точно хотите удалить {selectedItems.Count} платеж(ей)?",
+                "Подтверждение", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
             {
                 try
                 {
@@ -95,7 +91,8 @@ namespace _422_Dubkova.Pages
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"Ошибка при удалении: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show($"Ошибка при удалении: {ex.Message}",
+                        "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
         }

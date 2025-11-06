@@ -5,7 +5,7 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:_422_Dubkova.Pages"
       mc:Ignorable="d" 
-      d:DesignHeight="450" d:DesignWidth="800"
+      d:DesignHeight="500" d:DesignWidth="800"
       Title="Добавление платежа">
 
     <Grid>
@@ -24,20 +24,23 @@
 
             <!-- Название -->
             <Grid Width="400" Height="30" Margin="0,10">
-                <TextBox x:Name="TBName" Text="{Binding Name}" Height="30" VerticalAlignment="Top" TextChanged="TBName_TextChanged"/>
-                <TextBlock x:Name="NameHintText" Text="Название" VerticalAlignment="Center" Margin="5,0" Style="{StaticResource HintTextBlockStyle}"/>
+                <TextBox x:Name="TBName" Height="30" VerticalAlignment="Top" TextChanged="TBName_TextChanged"/>
+                <TextBlock x:Name="NameHintText" Text="Название" VerticalAlignment="Center" Margin="5,0" 
+                           Style="{StaticResource HintTextBlockStyle}"/>
             </Grid>
 
             <!-- Количество -->
             <Grid Width="400" Height="30" Margin="0,10">
-                <TextBox x:Name="TBNum" Text="{Binding Num}" Height="30" VerticalAlignment="Top" TextChanged="TBNum_TextChanged"/>
-                <TextBlock x:Name="NumHintText" Text="Количество" VerticalAlignment="Center" Margin="5,0" Style="{StaticResource HintTextBlockStyle}"/>
+                <TextBox x:Name="TBNum" Height="30" VerticalAlignment="Top" TextChanged="TBNum_TextChanged"/>
+                <TextBlock x:Name="NumHintText" Text="Количество" VerticalAlignment="Center" Margin="5,0" 
+                           Style="{StaticResource HintTextBlockStyle}"/>
             </Grid>
 
             <!-- Сумма -->
             <Grid Width="400" Height="30" Margin="0,10">
-                <TextBox x:Name="TBPrice" Text="{Binding Price}" Height="30" VerticalAlignment="Top" TextChanged="TBPrice_TextChanged"/>
-                <TextBlock x:Name="PriceHintText" Text="Сумма" VerticalAlignment="Center" Margin="5,0" Style="{StaticResource HintTextBlockStyle}"/>
+                <TextBox x:Name="TBPrice" Height="30" VerticalAlignment="Top" TextChanged="TBPrice_TextChanged"/>
+                <TextBlock x:Name="PriceHintText" Text="Сумма" VerticalAlignment="Center" Margin="5,0" 
+                           Style="{StaticResource HintTextBlockStyle}"/>
             </Grid>
 
             <!-- Категория -->

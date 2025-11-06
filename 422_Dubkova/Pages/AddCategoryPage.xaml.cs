@@ -11,18 +11,21 @@ namespace _422_Dubkova.Pages
     {
         private Category _currentCategory;
         private bool _isEditMode;
+        private CategoryTabPage _parentPage; // 🔗 Ссылка на родительскую страницу
 
-        public AddCategoryPage()
+        public AddCategoryPage(CategoryTabPage parentPage)
         {
             InitializeComponent();
+            _parentPage = parentPage;
             _currentCategory = new Category();
             _isEditMode = false;
             DataContext = _currentCategory;
         }
 
-        public AddCategoryPage(Category selectedCategory)
+        public AddCategoryPage(Category selectedCategory, CategoryTabPage parentPage)
         {
             InitializeComponent();
+            _parentPage = parentPage;
 
             if (selectedCategory != null)
             {
@@ -88,13 +91,11 @@ namespace _422_Dubkova.Pages
                     }
                     else
                     {
-                        // ✅ создаем новый объект в контексте (чтобы EF не путался)
                         var newCategory = new Category
                         {
                             Name = _currentCategory.Name
                         };
 
-                        // ✅ если ID не автоинкремент — генерируем его вручную
                         if (!db.Category.Any())
                             newCategory.ID = 1;
                         else
@@ -108,6 +109,9 @@ namespace _422_Dubkova.Pages
 
                 MessageBox.Show("Категория успешно сохранена!", "Успех",
                     MessageBoxButton.OK, MessageBoxImage.Information);
+
+                // 🔄 Обновляем список категорий на родительской странице
+                _parentPage?.LoadData();
 
                 NavigationService.GoBack();
             }

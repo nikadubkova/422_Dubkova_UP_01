@@ -1,41 +1,39 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Navigation;
 
 namespace _422_Dubkova.Pages
 {
-    /// <summary>
-    /// Логика взаимодействия для AddUserPage.xaml
-    /// </summary>
     public partial class AddUserPage : Page
     {
         private User _user;
         private bool _isEditMode;
+        private readonly Action _onUserSaved; // 🔹 обратный вызов
 
-        public AddUserPage()
+        public AddUserPage(Action onUserSaved)
         {
             InitializeComponent();
             _user = new User();
             _isEditMode = false;
             DataContext = _user;
+            _onUserSaved = onUserSaved;
         }
 
-        public AddUserPage(User selectedUser)
+        public AddUserPage(User selectedUser, Action onUserSaved)
         {
             InitializeComponent();
             _user = selectedUser;
             _isEditMode = true;
             DataContext = _user;
+            _onUserSaved = onUserSaved;
         }
 
-        // 🔹 Метод хэширования пароля (как в RegPage)
+        // 🔹 Метод хэширования пароля
         public static string GetHash(string password)
         {
             using (var sha1 = SHA1.Create())
@@ -56,7 +54,8 @@ namespace _422_Dubkova.Pages
 
             if (errors.Length > 0)
             {
-                MessageBox.Show(errors.ToString(), "Ошибка ввода", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show(errors.ToString(), "Ошибка ввода",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
@@ -66,8 +65,7 @@ namespace _422_Dubkova.Pages
                 {
                     if (!_isEditMode)
                     {
-                        // 🔹 Хэшируем пароль перед сохранением
-                        _user.Password = GetHash(TBPass.Text);
+                        _user.Password = GetHash(TBPass.Text); // 🔹 хэшируем пароль
                         db.User.Add(_user);
                     }
                     else
@@ -77,7 +75,6 @@ namespace _422_Dubkova.Pages
                         {
                             toUpdate.Login = _user.Login;
 
-                            // 🔹 Если пароль изменён — хэшируем новый
                             if (!string.IsNullOrWhiteSpace(TBPass.Text))
                                 toUpdate.Password = GetHash(TBPass.Text);
 
@@ -92,12 +89,16 @@ namespace _422_Dubkova.Pages
                     db.SaveChanges();
                 }
 
-                MessageBox.Show("Данные успешно сохранены", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
-                NavigationService.Navigate(new UserTabPage());
+                MessageBox.Show("Данные успешно сохранены", "Успех",
+                    MessageBoxButton.OK, MessageBoxImage.Information);
+
+                _onUserSaved?.Invoke(); // 🔹 вызываем обновление списка
+                NavigationService.GoBack();
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка при сохранении данных: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Ошибка при сохранении данных: {ex.Message}", "Ошибка",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -135,9 +136,7 @@ namespace _422_Dubkova.Pages
             bool noSelection = cmbRole.SelectedItem == null || string.IsNullOrEmpty(cmbRole.Text);
 
             if (!noSelection && cmbRole.SelectedItem is ComboBoxItem selectedItem)
-            {
                 _user.Role = selectedItem.Content.ToString();
-            }
         }
     }
 }

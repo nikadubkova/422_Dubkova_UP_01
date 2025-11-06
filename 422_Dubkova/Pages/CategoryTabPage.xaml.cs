@@ -2,17 +2,8 @@
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace _422_Dubkova.Pages
 {
@@ -29,7 +20,7 @@ namespace _422_Dubkova.Pages
             LoadData();
         }
 
-        private void LoadData()
+        public void LoadData()
         {
             using (var db = new Entities())
             {
@@ -53,13 +44,14 @@ namespace _422_Dubkova.Pages
 
         private void ButtonAdd_Click(object sender, RoutedEventArgs e)
         {
-            NavigationService.Navigate(new AddCategoryPage());
+            // ✅ Передаём ссылку на текущую страницу, чтобы потом обновить список
+            NavigationService.Navigate(new AddCategoryPage(this));
         }
 
         private void EditButton_Click(object sender, RoutedEventArgs e)
         {
             var selectedCategory = (Category)((Button)sender).DataContext;
-            NavigationService.Navigate(new AddCategoryPage(selectedCategory));
+            NavigationService.Navigate(new AddCategoryPage(selectedCategory, this));
         }
 
         private void ButtonDel_Click(object sender, RoutedEventArgs e)
@@ -72,7 +64,8 @@ namespace _422_Dubkova.Pages
                 return;
             }
 
-            if (MessageBox.Show($"Вы точно хотите удалить {selectedItems.Count} категорию(ии)?", "Подтверждение", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
+            if (MessageBox.Show($"Вы точно хотите удалить {selectedItems.Count} категорию(ии)?",
+                "Подтверждение", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
             {
                 try
                 {

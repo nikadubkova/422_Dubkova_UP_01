@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data.Entity;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Windows;
@@ -14,10 +15,14 @@ namespace _422_Dubkova.Pages
     {
         private Payment _currentPayment;
         private bool _isEditMode;
+        private readonly Action _onPaymentSaved; // колбэк для обновления списка платежей
 
-        public AddPaymentPage()
+        // Конструктор для добавления нового платежа
+        public AddPaymentPage(Action onPaymentSaved)
         {
             InitializeComponent();
+            _onPaymentSaved = onPaymentSaved;
+
             _currentPayment = new Payment
             {
                 Date = DateTime.Today
@@ -28,9 +33,11 @@ namespace _422_Dubkova.Pages
             LoadComboBoxes();
         }
 
-        public AddPaymentPage(Payment paymentToEdit)
+        // Конструктор для редактирования существующего платежа
+        public AddPaymentPage(Payment paymentToEdit, Action onPaymentSaved)
         {
             InitializeComponent();
+            _onPaymentSaved = onPaymentSaved;
 
             if (paymentToEdit != null)
             {
@@ -68,6 +75,36 @@ namespace _422_Dubkova.Pages
                 ? Visibility.Visible
                 : Visibility.Collapsed;
             _currentPayment.Name = TBName.Text;
+        }
+
+        private void TBNum_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            NumHintText.Visibility = string.IsNullOrEmpty(TBNum.Text)
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+
+            if (_currentPayment != null)
+            {
+                if (int.TryParse(TBNum.Text, NumberStyles.Integer, CultureInfo.InvariantCulture, out int parsedNum))
+                    _currentPayment.Num = parsedNum;
+                else
+                    _currentPayment.Num = 0;
+            }
+        }
+
+        private void TBPrice_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            PriceHintText.Visibility = string.IsNullOrEmpty(TBPrice.Text)
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+
+            if (_currentPayment != null)
+            {
+                if (decimal.TryParse(TBPrice.Text, NumberStyles.Number, CultureInfo.InvariantCulture, out decimal parsedPrice))
+                    _currentPayment.Price = parsedPrice;
+                else
+                    _currentPayment.Price = 0m;
+            }
         }
 
         private void cmbCategory_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -125,7 +162,6 @@ namespace _422_Dubkova.Pages
                     }
                     else
                     {
-                        // ✅ создаем новый объект в контексте (чистый, не связанный с другим контекстом)
                         var newPayment = new Payment
                         {
                             Date = _currentPayment.Date,
@@ -136,7 +172,6 @@ namespace _422_Dubkova.Pages
                             CategoryID = _currentPayment.Category.ID
                         };
 
-                        // ✅ если нет автоинкремента, выставляем ID вручную
                         if (db.Payment.Any())
                             newPayment.ID = db.Payment.Max(p => p.ID) + 1;
                         else
@@ -150,6 +185,9 @@ namespace _422_Dubkova.Pages
 
                 MessageBox.Show("Платёж успешно сохранён!", "Успех",
                     MessageBoxButton.OK, MessageBoxImage.Information);
+
+                // вызываем колбэк чтобы обновить список в PaymentTabPage
+                _onPaymentSaved?.Invoke();
 
                 NavigationService.GoBack();
             }
@@ -168,16 +206,6 @@ namespace _422_Dubkova.Pages
             TBNum.Text = "";
             TBPrice.Text = "";
             cmbCategory.SelectedItem = null;
-        }
-
-        private void TBNum_TextChanged(object sender, TextChangedEventArgs e)
-        {
-
-        }
-
-        private void TBPrice_TextChanged(object sender, TextChangedEventArgs e)
-        {
-
         }
     }
 }
